@@ -11,7 +11,7 @@ prvs = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
 # Create mask
 hsv_mask = np.zeros_like(frame1)
 # Make image saturation to a maximum value
-hsv_mask[..., 1] = 255
+hsv_mask[..., 1] = 0
 
 # Till you scan the video
 while(1):
@@ -28,9 +28,11 @@ while(1):
 	hsv_mask[..., 0] = ang * 180 / np.pi / 2
 	# Set value as per the normalized magnitude of optical flow
 	hsv_mask[..., 2] = cv2.normalize(mag, None, 0, 255, cv2.NORM_MINMAX)
+	# filtered out background part, might be specific for SAL.mp4 only 
+	hsv_mask[(hsv_mask[..., 0] > 75) & (hsv_mask[..., 0] < 105)] = 0
 	# Convert to rgb
 	rgb_representation = cv2.cvtColor(hsv_mask, cv2.COLOR_HSV2BGR)
-
+	
 	cv2.imshow('frame2', rgb_representation)
 	kk = cv2.waitKey(20) & 0xff
 	# Press 'e' to exit the video

@@ -1,8 +1,7 @@
 
 import cv2 as cv
 import numpy as np
-  
-  
+
 # The video feed is read in as
 # a VideoCapture object
 cap = cv.VideoCapture("SAL.mp4")
@@ -24,7 +23,7 @@ prev_gray = cv.cvtColor(first_frame, cv.COLOR_BGR2GRAY)
 mask = np.zeros_like(first_frame)
   
 # Sets image saturation to maximum
-mask[..., 1] = 255
+mask[..., 1] = 0
   
 while(cap.isOpened()):
       
@@ -35,7 +34,7 @@ while(cap.isOpened()):
       
     # Opens a new window and displays the input
     # frame
-    cv.imshow("input", frame)
+    # cv.imshow("input", frame)
       
     # Converts each frame to grayscale - we previously 
     # only converted the first frame to grayscale
@@ -56,6 +55,7 @@ while(cap.isOpened()):
     # Sets image value according to the optical flow
     # magnitude (normalized)
     mask[..., 2] = cv.normalize(magnitude, None, 0, 255, cv.NORM_MINMAX)
+    mask[(mask[..., 0] > 75) & (mask[..., 0] < 105)] = 0
       
     # Converts HSV to RGB (BGR) color representation
     rgb = cv.cvtColor(mask, cv.COLOR_HSV2BGR)
@@ -69,8 +69,17 @@ while(cap.isOpened()):
     # Frames are read by intervals of 1 millisecond. The
     # programs breaks out of the while loop when the
     # user presses the 'q' key
-    if cv.waitKey(1) & 0xFF == ord('q'):
+    # if cv.waitKey(1) & 0xFF == ord('q'):
+    #     break
+    kk = cv.waitKey(20) & 0xff
+    # Press 'e' to exit the video
+	# Press 's' to save the video
+    if kk == ord('e'):
         break
+    elif kk == ord('s'):
+        cv.imwrite('input.png', frame)
+        cv.imwrite('output.png', rgb)
+	
   
 # The following frees up resources and
 # closes all windows
